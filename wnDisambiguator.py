@@ -61,6 +61,10 @@ class stm:
             if self.item.getActivation() < self.forgetThreshold:
                 self.contents.remove(self.item)
 
+    def empty(self):
+        for self.item in self.contents:
+            self.contents.remove(self.item)
+
 
 #####################################################################################
 #####################################################################################
@@ -86,3 +90,7 @@ class episodicBuffer:
                 self.sendToStm(self.item)
                 return
         self.addItem(newItemSS)
+
+    def empty(self):
+        for self.item in self.contents:
+            self.contents.remove(self.item)
