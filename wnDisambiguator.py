@@ -48,5 +48,5 @@ class stm:
                 # return old item
                 return self.minItem
             else:
-                # return item which failed to enter stm
                 return newItem
+                # return item which failed to enter stm
