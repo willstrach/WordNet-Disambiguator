@@ -18,16 +18,20 @@ class memItem:
         return self.activation
 
 
+#####################################################################################
+#####################################################################################
+
 
 class stm:
-    def __init__(self, maxSize):
+    def __init__(self, maxSize, forgetThreshold):
         self.contents = []
         self.size = 0
         self.maxSize = maxSize #This value can be set, so that it can be adjusted in experimentation
+        self.forgetThreshold = forgetThreshold #This value can be set, so that it can be adjusted in experimentation
 
     def getLowestActivation(self):
         self.minItem = self.contents[0]
-        for item in self.contents:
+        for self.item in self.contents:
             if self.item.getActivation() < self.minItem.getActivation():
                 self.minItem = self.item
         return minItem
@@ -50,3 +54,35 @@ class stm:
             else:
                 return newItem
                 # return item which failed to enter stm
+
+    def forgetAll(self):
+        for self.item in self.contents:
+            self.item.forget()
+            if self.item.getActivation() < self.forgetThreshold:
+                self.contents.remove(self.item)
+
+
+#####################################################################################
+#####################################################################################
+
+
+class episodicBuffer:
+    def __init__(self):
+        self.contents = []
+
+    def addItem(self, newItemSS):
+        self.newItem = memItem(newItemSS, 1) # Create a new memItem object, with an activation of 1 (subject to change)
+        self.contents.append(newItem)
+
+    def sendToStm(self, sendItem, stm):
+        self.contents.remove(sendItem) # remove item being sent to the stm
+        self.returnedItem = stm.swapLowestItem(sendItem) # send item to stm, old item from stm, or the sent item is rejected
+        self.contents.append(self.returnedItem) # old stm item,or rejected sent item, re-added to episodic buffer
+
+    def activateItem(self, newItemSS):
+        for self.item in self.contents:
+            if self.item.getSynset == self.newItemSS:
+                self.item.activate()
+                self.sendToStm(self.item)
+                return
+        self.addItem(newItemSS)
