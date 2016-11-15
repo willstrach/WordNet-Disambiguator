@@ -7,6 +7,7 @@ class memItem:
         # This increases the activation of a synset according to a model
         # This method is subject to change
         self.activate += 1
+        
     def forget(self):
         # This decreases the activation of a synset according to a model
         # This method is subject to change
@@ -14,6 +15,7 @@ class memItem:
 
     def getSynset(self):
         return self.synset
+    
     def getActivation(self):
         return self.activation
 
