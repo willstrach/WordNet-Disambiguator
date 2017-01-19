@@ -9,10 +9,10 @@ class memItem:
         # This increases the activation of a synset according to a model
         # This method is subject to change
         self.activation += increase
-    
-    def forget(self):
+
+    def forget(self, decrease):
         # This decreases the activation of a synset according to a model
-        # This method is subject to change    
+        # This method is subject to change
         if self.activation > decrease:
             self.activation -= decrease
         else:
@@ -20,7 +20,7 @@ class memItem:
 
     def getSynset(self):
         return self.synset
-    
+
     def getActivation(self):
         return self.activation
 
@@ -100,7 +100,7 @@ class stm:
     def forgetAll(self):
         # forgets all items in the stm
         for item in self.contents:
-            item.forget()
+            item.forget(self.forgetConstant)
 
     def activateItem(self, synset):
         # actiivates the memItem corresponding to the input synset
@@ -126,12 +126,14 @@ class episodicBuffer:
         return self.contents
 
     def inContents(self, inputSynset):
+        # Takes an input of a synset, and returns boolean value, depending upon whether synset is in episodicBuffer
         for item in self.getContents():
             if item.getSynset() == inputSynset:
                 return True
         return False
 
     def addSynset(self, newSynset):
+        # Takes input of Synset, and adds it to the episodicBuffer, with the initial activation constant as its activation
         if self.inContents(newSynset):
             raise Exception("Synset already in episodicBuffer")
         else:
@@ -139,6 +141,7 @@ class episodicBuffer:
             self.contents.append(newItem)
 
     def addItem(self, newItem):
+        # Takes input of type memItem, and adds it to the episodicBuffer
         if newItem == None:
             return
         if isinstance(newItem, memItem):
@@ -151,6 +154,7 @@ class episodicBuffer:
 
 
     def removeSynset(self, removedSynset):
+        # Takes input of a synset, and removes its corresponding memItem from the stm
         for item in self.contents:
             if item.getSynset() == removedSynset:
                 self.contents.remove(item)
@@ -158,6 +162,7 @@ class episodicBuffer:
         raise LookupError("Item not in episodic buffer")
 
     def activateItem(self, synset):
+        # actiivates the memItem corresponding to the input synset
         if self.inContents(synset):
             for item in self.contents:
                 if item.getSynset() == synset:
@@ -167,8 +172,9 @@ class episodicBuffer:
             raise LookupError("Item not in episodic Buffer")
 
     def forgetAll(self):
+        # forgets all items in the stm
         for item in self.contents:
-            item.forget()
+            item.forget(self.forgetConstant)
 
 ###############################################################################
 ###############################################################################
@@ -179,6 +185,8 @@ class memoryController:
         self.episodicBuffer = episodicBuffer
 
     def sendToStm(self, inputSynset):
+        # Take input of a synset, and swaps it's corresponding memItem with one in the STM, if its
+        # activation is high enough
         for item in self.episodicBuffer.getContents():
             if item.getSynset() == inputSynset:
                 inputItem = item
@@ -187,9 +195,9 @@ class memoryController:
         returnedItem = self.stm.swapLowestItem(inputItem)
         self.episodicBuffer.addItem(returnedItem)
 
-
-
     def activateSynset(self, synset):
+        # Takes input of synset, increases the activation of its corresponding memItem in stm or episodicBuffer
+        # If synset is not in either, the synset is added to the episodicBuffer or stm, depending on activation
         if self.stm.inContents(synset):
             self.stm.activateItem(synset)
         elif self.episodicBuffer.inContents(synset):
@@ -198,3 +206,7 @@ class memoryController:
         else:
             self.episodicBuffer.addSynset(synset)
             self.sendToStm(synset)
+
+    def forgetAll(self):
+        self.stm.forgetAll()
+        self.episodicBuffer.forgetAll()
