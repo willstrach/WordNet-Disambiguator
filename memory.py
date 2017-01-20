@@ -1,4 +1,5 @@
 import random
+from models import *
 
 class memItem:
     def __init__(self, synset, activation):
@@ -99,13 +100,13 @@ class stm:
 
     def forgetAll(self):
         # forgets all items in the stm
-        for item in self.contents:
+        for item in self.getContents():
             item.forget(self.forgetConstant)
 
     def activateItem(self, synset):
         # actiivates the memItem corresponding to the input synset
         if self.inContents(synset):
-            for item in self.contents:
+            for item in self.getContents():
                 if item.getSynset() == synset:
                     item.activate(self.activationConstant)
                     return
@@ -183,6 +184,14 @@ class memoryController:
     def __init__(self, stm, episodicBuffer):
         self.stm = stm
         self.episodicBuffer = episodicBuffer
+
+    def __repr__(self):
+        # Prints the contents of the stm, used for debugging
+        toReturn = "---------------------------------\n"
+        for synset in self.stm.getContents():
+            toReturn += str(synset.getSynset()) + " - " + str(synset.getActivation()) + "\n"
+        toReturn += "---------------------------------"
+        return toReturn
 
     def sendToStm(self, inputSynset):
         # Take input of a synset, and swaps it's corresponding memItem with one in the STM, if its

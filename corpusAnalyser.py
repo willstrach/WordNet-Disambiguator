@@ -1,4 +1,5 @@
 from memory import *
+from models import *
 from nltk.corpus import wordnet as wn
 
 def printStm(memoryController):
@@ -23,7 +24,8 @@ def paragraphAnalyser(inputParagraph, memoryController):
     # Takes input of a paragraph, which is a list of sentences
     # and loops through all sentences
     for sentence in inputParagraph:
-        printStm(memoryController)
+        print sentence
+        print(memoryController)
         sentenceAnalyser(sentence, memoryController)
         memoryController.forgetAll()
 
