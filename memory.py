@@ -1,23 +1,18 @@
 import random
-from models import *
+import models
 
 class memItem:
     def __init__(self, synset, activation):
         self.synset = synset
         self.activation = activation
 
-    def activate(self, increase):
+    def activate(self, constant):
         # This increases the activation of a synset according to a model
-        # This method is subject to change
-        self.activation += increase
+        self.activation = models.basicActivation(self.activation, constant)
 
-    def forget(self, decrease):
+    def forget(self, constant):
         # This decreases the activation of a synset according to a model
-        # This method is subject to change
-        if self.activation > decrease:
-            self.activation -= decrease
-        else:
-            self.activation = 0
+        self.activation = models.basicForget(self.activation, constant)
 
     def getSynset(self):
         return self.synset

@@ -2,6 +2,7 @@ from memory import *
 from corpusAnalyser import *
 from nltk.corpus import brown as corpus
 from nltk.corpus import wordnet as wn
+import models
 from sys import stdout
 
 # The following values are stated here as constants to ease experimentation

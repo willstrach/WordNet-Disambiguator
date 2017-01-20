@@ -1,5 +1,5 @@
 from memory import *
-from models import *
+import models
 from nltk.corpus import wordnet as wn
 
 def printStm(memoryController):
@@ -40,4 +40,5 @@ def wordAnalyser(inputWord, memoryController):
     # and loops through all senses
     word_senses = wn.synsets(inputWord)
     for sense in word_senses:
-        memoryController.activateSynset(sense)
+        models.basicHypernym(sense, 5, memoryController)
+        # memoryController.activateSynset(sense)
