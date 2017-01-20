@@ -8,11 +8,11 @@ class memItem:
 
     def activate(self, constant):
         # This increases the activation of a synset according to a model
-        self.activation = models.basicActivation(self.activation, constant)
+        self.activation = models.variableActivation(self.activation, constant)
 
     def forget(self, constant):
         # This decreases the activation of a synset according to a model
-        self.activation = models.basicForget(self.activation, constant)
+        self.activation = models.variableForget(self.activation, constant)
 
     def getSynset(self):
         return self.synset
@@ -24,13 +24,13 @@ class memItem:
 ###############################################################################
 
 class stm:
-    def __init__(self, maxSize, forgetThreshold, activationConstant, forgetConstant):
+    def __init__(self, maxSize, forgetThreshold, activationConstantBoost, forgetConstant):
         self.contents = []
         self.size = 0
         # The following values can be set, so that they can be adjusted in experimentation
         self.maxSize = maxSize
         self.forgetThreshold = forgetThreshold
-        self.activationConstant = activationConstant
+        self.activationConstantBoost = activationConstantBoost
         self.forgetConstant = forgetConstant
 
     def getContents(self):
@@ -60,16 +60,16 @@ class stm:
 
     def removeSynset(self, removedSynset):
         # Takes input of a synset, and removes its corresponding memItem from the stm
-        for item in self.contents:
+        for item in self.getContents():
             if item.getSynset() == removedSynset:
-                self.contents.remove(item)
+                self.getContents().remove(item)
                 self.size -= 1
                 return
         raise LookupError("Item not in STM")
 
     def getLowestActivation(self):
         # Returns the memItem in the stm with the lowest activation
-        minItem = self.contents[0]
+        minItem = self.getContents()[0]
         for item in self.getContents():
             if item.getActivation() < minItem.getActivation():
                 minItem = item
@@ -98,12 +98,13 @@ class stm:
         for item in self.getContents():
             item.forget(self.forgetConstant)
 
-    def activateItem(self, synset):
+    def activateItem(self, synset, constant):
         # actiivates the memItem corresponding to the input synset
+        constant *= self.activationConstantBoost
         if self.inContents(synset):
             for item in self.getContents():
                 if item.getSynset() == synset:
-                    item.activate(self.activationConstant)
+                    item.activate(constant)
                     return
         else:
             raise LookupError("Item not in stm")
@@ -151,25 +152,25 @@ class episodicBuffer:
 
     def removeSynset(self, removedSynset):
         # Takes input of a synset, and removes its corresponding memItem from the stm
-        for item in self.contents:
+        for item in self.getContents():
             if item.getSynset() == removedSynset:
                 self.contents.remove(item)
                 return
         raise LookupError("Item not in episodic buffer")
 
-    def activateItem(self, synset):
+    def activateItem(self, synset, constant):
         # actiivates the memItem corresponding to the input synset
         if self.inContents(synset):
-            for item in self.contents:
+            for item in self.getContents():
                 if item.getSynset() == synset:
-                    item.activate(self.activationConstant)
+                    item.activate(constant)
                     return
         else:
             raise LookupError("Item not in episodic Buffer")
 
     def forgetAll(self):
         # forgets all items in the stm
-        for item in self.contents:
+        for item in self.getContents():
             item.forget(self.forgetConstant)
 
 ###############################################################################
@@ -199,13 +200,13 @@ class memoryController:
         returnedItem = self.stm.swapLowestItem(inputItem)
         self.episodicBuffer.addItem(returnedItem)
 
-    def activateSynset(self, synset):
+    def activateSynset(self, synset, constant):
         # Takes input of synset, increases the activation of its corresponding memItem in stm or episodicBuffer
         # If synset is not in either, the synset is added to the episodicBuffer or stm, depending on activation
         if self.stm.inContents(synset):
-            self.stm.activateItem(synset)
+            self.stm.activateItem(synset, constant)
         elif self.episodicBuffer.inContents(synset):
-            self.episodicBuffer.activateItem(synset)
+            self.episodicBuffer.activateItem(synset, constant)
             self.sendToStm(synset)
         else:
             self.episodicBuffer.addSynset(synset)

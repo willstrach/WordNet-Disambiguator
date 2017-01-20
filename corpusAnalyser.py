@@ -24,21 +24,21 @@ def paragraphAnalyser(inputParagraph, memoryController):
     # Takes input of a paragraph, which is a list of sentences
     # and loops through all sentences
     for sentence in inputParagraph:
-        print sentence
         print(memoryController)
         sentenceAnalyser(sentence, memoryController)
         memoryController.forgetAll()
 
 def sentenceAnalyser(inputSentence, memoryController):
     # Takes input of a sentence, which is a list of words
-    # and loops through all words
+    # and loops through all nouns
     for word in inputSentence:
-        wordAnalyser(word, memoryController)
+        if (word[1][:1] == "N") and (word[1][:1] != "NP"):
+            wordAnalyser(word[0], memoryController)
 
 def wordAnalyser(inputWord, memoryController):
     # Takes input of a word, each with a set of senses
     # and loops through all senses
     word_senses = wn.synsets(inputWord)
     for sense in word_senses:
-        models.basicHypernym(sense, 5, memoryController)
+        models.linearHypernym(sense, 3, memoryController, 1)
         # memoryController.activateSynset(sense)

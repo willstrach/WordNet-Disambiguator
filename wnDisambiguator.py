@@ -9,7 +9,7 @@ from sys import stdout
 # STM
 STM_MAXSIZE = 5
 STM_FORGETTHRESHHOLD = 0
-STM_ACTIVATIONCONSTANT = 2
+STM_ACTIVATIONCONSTANTBOOST = 2
 STM_FORGETCONSTANT = 0.5
 # Episodic Buffer
 EB_ACTIVATIONCONSTANT = 1
@@ -17,14 +17,14 @@ EB_FORGETCONSTANT = 0.5
 
 #initialise memory structures
 episodicBuffer = episodicBuffer(EB_ACTIVATIONCONSTANT, EB_FORGETCONSTANT)
-stm = stm(STM_MAXSIZE, STM_FORGETTHRESHHOLD, STM_ACTIVATIONCONSTANT, STM_FORGETCONSTANT)
+stm = stm(STM_MAXSIZE, STM_FORGETTHRESHHOLD, STM_ACTIVATIONCONSTANTBOOST, STM_FORGETCONSTANT)
 memoryController = memoryController(stm, episodicBuffer)
 
 # format testing data as a list of documents
 test_files = corpus.fileids()
 total_corpus = []
 for f in test_files:
-    total_corpus.append(corpus.paras(f))
+    total_corpus.append(corpus.tagged_paras(f))
 
 
 corpusAnalyser(total_corpus[0], memoryController)
