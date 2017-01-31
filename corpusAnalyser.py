@@ -41,4 +41,3 @@ def wordAnalyser(inputWord, memoryController):
     word_senses = wn.synsets(inputWord)
     for sense in word_senses:
         models.linearHypernym(sense, 3, memoryController, 1)
-        # memoryController.activateSynset(sense)

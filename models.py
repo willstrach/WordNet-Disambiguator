@@ -57,3 +57,11 @@ def linearHypernym(synset, depth, memoryController, constant):
         return
     else:
         return
+
+
+
+### DISABIGUATION MODELS ###
+def disambiguate(synsetList, memoryController):
+    for item in memoryController.stm.getContents():
+        if item in synsetList:
+            return item
