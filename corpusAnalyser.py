@@ -17,23 +17,31 @@ def printStm(memoryController):
 def corpusAnalyser(inputCorpus, memoryController):
     # Takes input of a corpus, which is a list of paragraphs
     # and loops through all paragraphs
+    outputList = []
     for paragraph in inputCorpus:
-        paragraphAnalyser(paragraph, memoryController)
+        outputList.append(paragraphAnalyser(paragraph, memoryController))
+    return outputList
 
 def paragraphAnalyser(inputParagraph, memoryController):
     # Takes input of a paragraph, which is a list of sentences
     # and loops through all sentences
+    outputList = []
     for sentence in inputParagraph:
         print(memoryController)
-        sentenceAnalyser(sentence, memoryController)
+        outputList.append(sentenceAnalyser(sentence, memoryController))
         memoryController.forgetAll()
+    return outputList
 
 def sentenceAnalyser(inputSentence, memoryController):
     # Takes input of a sentence, which is a list of words
     # and loops through all nouns
+    outputList = []
     for word in inputSentence:
         if (word[1][:1] == "N") and (word[1][:1] != "NP"):
             wordAnalyser(word[0], memoryController)
+    for word in inputSentence:
+        outputList.append(word, models.disambiguate(wn.synsets(word), memoryController))
+    return outputList
 
 def wordAnalyser(inputWord, memoryController):
     # Takes input of a word, each with a set of senses

@@ -2,6 +2,7 @@ from memory import *
 from corpusAnalyser import *
 from nltk.corpus import brown as corpus
 from nltk.corpus import wordnet as wn
+import random
 
 # All models to be varied will exist in this module. This makes it easier to vary
 # them during experimentation
@@ -61,7 +62,28 @@ def linearHypernym(synset, depth, memoryController, constant):
 
 
 ### DISABIGUATION MODELS ###
+def hyponymSearch(synsetList, searchItem):
+    hyponymList = searchItem.hyponyms()
+    if len(hyponymList) == 0:
+        return None
+    for item in hyponymList:
+        if item in synsetList:
+            return item
+    for item in hyponymList:
+        returnedItem = hyponymSearch(synsetList, item)
+        if returnedItem != None:
+            return returnedItem
+    return None
+
+
+
 def disambiguate(synsetList, memoryController):
     for item in memoryController.stm.getContents():
         if item in synsetList:
             return item
+    for item in memoryController.stm.getContents():
+        returnedSynset = hyponymSearch(synsetList, item)
+        if returnedSynset != None:
+            return returnedSynset
+        else:
+            return random.choice(synsetList)
