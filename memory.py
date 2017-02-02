@@ -1,7 +1,7 @@
 import random
 import models
 
-class memItem:
+class MemItem:
     def __init__(self, synset, activation):
         self.synset = synset
         self.activation = activation
@@ -23,7 +23,7 @@ class memItem:
 ###############################################################################
 ###############################################################################
 
-class stm:
+class Stm:
     def __init__(self, maxSize, forgetThreshold, activationConstantBoost, forgetConstant):
         self.contents = []
         self.size = 0
@@ -32,6 +32,14 @@ class stm:
         self.forgetThreshold = forgetThreshold
         self.activationConstantBoost = activationConstantBoost
         self.forgetConstant = forgetConstant
+
+    def __repr__(self):
+        # Prints the contents of the stm, used for debugging
+        toReturn = "---------------------------------\n"
+        for synset in self.getContents():
+            toReturn += str(synset.getSynset()) + " - " + str(synset.getActivation()) + "\n"
+        toReturn += "---------------------------------"
+        return toReturn
 
     def getContents(self):
         return self.contents
@@ -46,20 +54,25 @@ class stm:
                 return True
         return False
 
+    def getItem(self, inputSynset):
+        for item in self.getContents():
+            if item.getSynset() == inputSynset:
+                return item
+
     def addItem(self, newItem):
         # Takes input of type memItem, and adds it to the stm
         if self.getSize() < self.maxSize:
-            if isinstance(newItem, memItem):
+            if isinstance(newItem, MemItem):
                 self.contents.append(newItem)
                 self.size += 1
                 return
             else:
-                raise TypeError("Argument is not of memItem type")
+                raise TypeError("Argument is not of MemItem type")
         else:
             raise Exception("stm is full")
 
     def removeSynset(self, removedSynset):
-        # Takes input of a synset, and removes its corresponding memItem from the stm
+        # Takes input of a synset, and removes its corresponding MemItem from the stm
         for item in self.getContents():
             if item.getSynset() == removedSynset:
                 self.getContents().remove(item)
@@ -68,7 +81,7 @@ class stm:
         raise LookupError("Item not in STM")
 
     def getLowestActivation(self):
-        # Returns the memItem in the stm with the lowest activation
+        # Returns the MemItem in the stm with the lowest activation
         minItem = self.getContents()[0]
         for item in self.getContents():
             if item.getActivation() < minItem.getActivation():
@@ -78,9 +91,9 @@ class stm:
         return minItem
 
     def swapLowestItem(self, newItem):
-        # Takes memItem input, and either, swaps it for the lowest activation
+        # Takes MemItem input, and either, swaps it for the lowest activation
         # item in the stm (returning the old stm item), or it rejects (and returns)
-        # the input memItem object
+        # the input MemItem object
         if self.getSize() < self.maxSize:
             self.addItem(newItem)
             return None
@@ -99,7 +112,7 @@ class stm:
             item.forget(self.forgetConstant)
 
     def activateItem(self, synset, constant):
-        # actiivates the memItem corresponding to the input synset
+        # actiivates the MemItem corresponding to the input synset
         constant *= self.activationConstantBoost
         if self.inContents(synset):
             for item in self.getContents():
@@ -112,106 +125,81 @@ class stm:
 ###############################################################################
 ###############################################################################
 
-class episodicBuffer:
-    def __init__(self, activationConstant, forgetConstant):
+class EpisodicBuffer:
+    def __init__(self):
         self.contents = []
-        # The following values can be set, so that they can be adjusted in experimentation
-        self.activationConstant = activationConstant
-        self.forgetConstant = forgetConstant
+
+    def __repr__(self):
+        # Prints the contents of the stm, used for debugging
+        toReturn = "---------------------------------\n"
+        for synset in self.getContents():
+            toReturn += str(synset) + "\n"
+        toReturn += "---------------------------------"
+        return toReturn
 
     def getContents(self):
         return self.contents
 
     def inContents(self, inputSynset):
-        # Takes an input of a synset, and returns boolean value, depending upon whether synset is in episodicBuffer
+        # Takes an input of a synset, and returns boolean value,
+        # depending upon whether synset is in episodicBuffer
         for item in self.getContents():
-            if item.getSynset() == inputSynset:
+            if str(item) == str(inputSynset):
                 return True
         return False
 
-    def addSynset(self, newSynset):
-        # Takes input of Synset, and adds it to the episodicBuffer, with the initial activation constant as its activation
-        if self.inContents(newSynset):
+    def addSynset(self, inputSynset):
+        # Takes input of Synset, and adds it to the episodicBuffer
+        if self.inContents(inputSynset):
             raise Exception("Synset already in episodicBuffer")
         else:
-            newItem = memItem(newSynset, self.activationConstant)
-            self.contents.append(newItem)
+            self.contents.append(inputSynset)
 
-    def addItem(self, newItem):
-        # Takes input of type memItem, and adds it to the episodicBuffer
-        if newItem == None:
-            return
-        if isinstance(newItem, memItem):
-            if self.inContents(newItem.getSynset()):
-                raise Exception("Synset already in episodicBuffer")
-            else:
-                self.contents.append(newItem)
-        else:
-            raise TypeError("Argument is not of memItem type")
-
-
-    def removeSynset(self, removedSynset):
-        # Takes input of a synset, and removes its corresponding memItem from the stm
+    def removeSynset(self, inputSynset):
+        # Takes input of a synset, and removes its corresponding Item from the
+        # EpisodicBuffer
         for item in self.getContents():
-            if item.getSynset() == removedSynset:
+            if item == removedSynset:
                 self.contents.remove(item)
                 return
         raise LookupError("Item not in episodic buffer")
 
-    def activateItem(self, synset, constant):
-        # actiivates the memItem corresponding to the input synset
-        if self.inContents(synset):
-            for item in self.getContents():
-                if item.getSynset() == synset:
-                    item.activate(constant)
-                    return
-        else:
-            raise LookupError("Item not in episodic Buffer")
-
-    def forgetAll(self):
-        # forgets all items in the stm
-        for item in self.getContents():
-            item.forget(self.forgetConstant)
+    def empty(self):
+        self.contents = []
 
 ###############################################################################
 ###############################################################################
 
-class memoryController:
+class MemoryController:
     def __init__(self, stm, episodicBuffer):
         self.stm = stm
         self.episodicBuffer = episodicBuffer
 
     def __repr__(self):
-        # Prints the contents of the stm, used for debugging
-        toReturn = "---------------------------------\n"
-        for synset in self.stm.getContents():
-            toReturn += str(synset.getSynset()) + " - " + str(synset.getActivation()) + "\n"
-        toReturn += "---------------------------------"
-        return toReturn
+        # Prints the contents of the stm and episodicBuffer, used for debugging
+        toReturn = "##### STM ##### \n"
+        toReturn += self.stm + "\n \n"
+        toReturn += "##### EPISODIC BUFFER ##### \n"
+        toReturn += self.episodicBuffer + "\n \n"
 
-    def sendToStm(self, inputSynset):
-        # Take input of a synset, and swaps it's corresponding memItem with one in the STM, if its
-        # activation is high enough
-        for item in self.episodicBuffer.getContents():
-            if item.getSynset() == inputSynset:
-                inputItem = item
-                break
-        self.episodicBuffer.removeSynset(inputSynset)
+    def sendToStm(self, inputItem):
+        # Take input of a synset, and swaps it's corresponding MemItem with one in the STM,
+        # if its activation is high enough
         returnedItem = self.stm.swapLowestItem(inputItem)
-        self.episodicBuffer.addItem(returnedItem)
+        if returnedItem is None:
+            return
+        if not self.episodicBuffer.inContents(returnedItem.getSynset()):
+            self.episodicBuffer.addSynset(returnedItem.getSynset())
 
-    def activateSynset(self, synset, constant):
-        # Takes input of synset, increases the activation of its corresponding memItem in stm or episodicBuffer
-        # If synset is not in either, the synset is added to the episodicBuffer or stm, depending on activation
+    def activateSynset(self, synset, activationModifier):
         if self.stm.inContents(synset):
-            self.stm.activateItem(synset, constant)
-        elif self.episodicBuffer.inContents(synset):
-            self.episodicBuffer.activateItem(synset, constant)
-            self.sendToStm(synset)
-        else:
-            self.episodicBuffer.addSynset(synset)
-            self.sendToStm(synset)
-
-    def forgetAll(self):
-        self.stm.forgetAll()
-        self.episodicBuffer.forgetAll()
+            self.stm.getItem(synset).activate(activationModifier)
+            return
+        if self.episodicBuffer.inContents(synset):
+            newMemItem = MemItem(synset, 1)
+            newMemItem.activate(activationModifier)
+            self.sendToStm(newMemItem)
+            return
+        newMemItem = MemItem(synset, 0)
+        newMemItem.activate(activationModifier)
+        self.sendToStm(newMemItem)

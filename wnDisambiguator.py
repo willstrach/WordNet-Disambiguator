@@ -12,13 +12,12 @@ STM_FORGETTHRESHHOLD = 0
 STM_ACTIVATIONCONSTANTBOOST = 2
 STM_FORGETCONSTANT = 0.5
 # Episodic Buffer
-EB_ACTIVATIONCONSTANT = 1
-EB_FORGETCONSTANT = 0.5
+
 
 #initialise memory structures
-episodicBuffer = episodicBuffer(EB_ACTIVATIONCONSTANT, EB_FORGETCONSTANT)
-stm = stm(STM_MAXSIZE, STM_FORGETTHRESHHOLD, STM_ACTIVATIONCONSTANTBOOST, STM_FORGETCONSTANT)
-memoryController = memoryController(stm, episodicBuffer)
+episodicBuffer = EpisodicBuffer()
+stm = Stm(STM_MAXSIZE, STM_FORGETTHRESHHOLD, STM_ACTIVATIONCONSTANTBOOST, STM_FORGETCONSTANT)
+memoryController = MemoryController(stm, episodicBuffer)
 
 # format testing data as a list of documents
 test_files = corpus.fileids()
@@ -28,6 +27,10 @@ for f in test_files:
 
 
 disambiguatedCorpus = corpusAnalyser(total_corpus[0], memoryController)
+
+outputFile = open("output.txt", "w")
+outputFile.close()
+
 
 # Write the output of the program to file
 outputFile = open("output.txt", "a")

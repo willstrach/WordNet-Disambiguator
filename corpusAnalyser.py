@@ -29,7 +29,7 @@ def paragraphAnalyser(inputParagraph, memoryController):
     outputList = []
     for sentence in inputParagraph:
         outputList.append(sentenceAnalyser(sentence, memoryController))
-        memoryController.forgetAll()
+        memoryController.stm.forgetAll()
     return outputList
 
 def sentenceAnalyser(inputSentence, memoryController):
@@ -37,9 +37,8 @@ def sentenceAnalyser(inputSentence, memoryController):
     # and loops through all nouns
     outputList = []
     for word in inputSentence:
-        if (word[1][:1] == "N") and (word[1][:1] != "NP"):
-            wordAnalyser(word[0], memoryController)
-    # print(memoryController)
+        wordAnalyser(word[0], memoryController)
+    # print(memoryController.stm)
     for word in inputSentence:
         if (len(wn.synsets(word[0])) > 0):
             outputList.append((word[0], models.disambiguate(wn.synsets(word[0]), memoryController)))
