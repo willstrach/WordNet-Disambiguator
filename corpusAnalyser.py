@@ -1,6 +1,7 @@
 from memory import *
 import models
 from nltk.corpus import wordnet as wn
+from tqdm import tqdm
 
 def printStm(memoryController):
     # Prints the contents of the stm, used for debugging
@@ -18,7 +19,7 @@ def corpusAnalyser(inputCorpus, memoryController):
     # Takes input of a corpus, which is a list of paragraphs
     # and loops through all paragraphs
     outputList = []
-    for paragraph in inputCorpus:
+    for paragraph in tqdm(inputCorpus):
         outputList.append(paragraphAnalyser(paragraph, memoryController))
     return outputList
 
@@ -27,7 +28,6 @@ def paragraphAnalyser(inputParagraph, memoryController):
     # and loops through all sentences
     outputList = []
     for sentence in inputParagraph:
-        print(memoryController)
         outputList.append(sentenceAnalyser(sentence, memoryController))
         memoryController.forgetAll()
     return outputList
@@ -39,13 +39,15 @@ def sentenceAnalyser(inputSentence, memoryController):
     for word in inputSentence:
         if (word[1][:1] == "N") and (word[1][:1] != "NP"):
             wordAnalyser(word[0], memoryController)
+    # print(memoryController)
     for word in inputSentence:
-        outputList.append(word, models.disambiguate(wn.synsets(word), memoryController))
+        if (len(wn.synsets(word[0])) > 0):
+            outputList.append((word[0], models.disambiguate(wn.synsets(word[0]), memoryController)))
     return outputList
 
 def wordAnalyser(inputWord, memoryController):
     # Takes input of a word, each with a set of senses
     # and loops through all senses
-    word_senses = wn.synsets(inputWord)
-    for sense in word_senses:
+    wordSenses = wn.synsets(inputWord)
+    for sense in wordSenses:
         models.linearHypernym(sense, 3, memoryController, 1)

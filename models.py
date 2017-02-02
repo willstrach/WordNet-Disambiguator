@@ -71,7 +71,7 @@ def hyponymSearch(synsetList, searchItem):
             return item
     for item in hyponymList:
         returnedItem = hyponymSearch(synsetList, item)
-        if returnedItem != None:
+        if returnedItem is not None:
             return returnedItem
     return None
 
@@ -79,11 +79,11 @@ def hyponymSearch(synsetList, searchItem):
 
 def disambiguate(synsetList, memoryController):
     for item in memoryController.stm.getContents():
-        if item in synsetList:
-            return item
+        if item.getSynset() in synsetList:
+            return item.getSynset()
     for item in memoryController.stm.getContents():
-        returnedSynset = hyponymSearch(synsetList, item)
-        if returnedSynset != None:
+        returnedSynset = hyponymSearch(synsetList, item.getSynset())
+        if returnedSynset is not None:
             return returnedSynset
         else:
             return random.choice(synsetList)

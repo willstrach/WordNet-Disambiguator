@@ -27,4 +27,12 @@ for f in test_files:
     total_corpus.append(corpus.tagged_paras(f))
 
 
-corpusAnalyser(total_corpus[0], memoryController)
+disambiguatedCorpus = corpusAnalyser(total_corpus[0], memoryController)
+
+# Write the output of the program to file
+outputFile = open("output.txt", "a")
+for paragraph in disambiguatedCorpus:
+    for sentence in paragraph:
+        for word in sentence:
+            outputFile.write(str(word[0])+" - "+str(word[1])+"\n")
+outputFile.close()
