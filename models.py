@@ -66,6 +66,9 @@ def variableHypernym(synset, depth, memoryController):
 
 ### DISABIGUATION MODELS ###
 def hyponymSearch(synsetList, searchItem):
+    # Given a list of synsets, and an item to be searched, the function traverses
+    # all hyponyms of the searchItem, and returns None, if the synset can't be found,
+    # else, returns the synset
     hyponymList = searchItem.hyponyms()
     if len(hyponymList) == 0:
         return None
@@ -78,14 +81,26 @@ def hyponymSearch(synsetList, searchItem):
             return returnedItem
     return None
 
-def mostLikelySynset(synsetList, synsetFrequency):
+def synsetFrequency(synset):
+    # Given a synset, thee function sums the frequency over all its lemmas,
+    # and returns the value
+    outputFrequency = 0
+    for lemma in synset.lemmas():
+        outputFrequency += lemma.count()
+    return outputFrequency
+
+def mostLikelySynset(synsetList):
+    # Given a list of synsets, this function calculates the most likely one
+    # and returns it
     outputSynset = synsetList[0]
     for synset in synsetList:
-        if synsetFrequency[synset] > synsetFrequency[outputSynset]:
+        if synsetFrequency(outputSynset) < synsetFrequency(synset):
             outputSynset = synset
     return outputSynset
 
-def disambiguate(synsetList, memoryController, synsetFrequency):
+
+
+def disambiguate(synsetList, memoryController):
     for item in memoryController.stm.getContents():
         if item.getSynset() in synsetList:
             return item.getSynset()
@@ -94,4 +109,4 @@ def disambiguate(synsetList, memoryController, synsetFrequency):
         if returnedSynset is not None:
             return returnedSynset
         else:
-            return mostLikelySynset(synsetList, synsetFrequency)
+            return mostLikelySynset(synsetList)

@@ -15,25 +15,25 @@ def printStm(memoryController):
 # of just using nested loops for clarity, and so that
 # the contents of the memory can be altered at each of these levels
 
-def corpusAnalyser(inputCorpus, memoryController, synsetFrequency):
+def corpusAnalyser(inputCorpus, memoryController):
     # Takes input of a corpus, which is a list of paragraphs
     # and loops through all paragraphs
     outputList = []
     # for paragraph in inputCorpus:
     for paragraph in tqdm(inputCorpus):
-        outputList.append(paragraphAnalyser(paragraph, memoryController, synsetFrequency))
+        outputList.append(paragraphAnalyser(paragraph, memoryController))
     return outputList
 
-def paragraphAnalyser(inputParagraph, memoryController, synsetFrequency):
+def paragraphAnalyser(inputParagraph, memoryController):
     # Takes input of a paragraph, which is a list of sentences
     # and loops through all sentences
     outputList = []
     for sentence in inputParagraph:
-        outputList.append(sentenceAnalyser(sentence, memoryController, synsetFrequency))
+        outputList.append(sentenceAnalyser(sentence, memoryController))
         memoryController.stm.forgetAll()
     return outputList
 
-def sentenceAnalyser(inputSentence, memoryController, synsetFrequency):
+def sentenceAnalyser(inputSentence, memoryController):
     # Takes input of a sentence, which is a list of words
     # and loops through all nouns
     outputList = []
@@ -44,7 +44,7 @@ def sentenceAnalyser(inputSentence, memoryController, synsetFrequency):
     for word in inputSentence:
         if word[1][:1] == "N":
             if (len(wn.synsets(word[0])) > 0):
-                outputList.append((word[0], models.disambiguate(wn.synsets(word[0]), memoryController, synsetFrequency)))
+                outputList.append((word[0], models.disambiguate(wn.synsets(word[0]), memoryController)))
     return outputList
 
 def wordAnalyser(inputWord, memoryController):

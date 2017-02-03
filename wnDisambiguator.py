@@ -19,17 +19,6 @@ episodicBuffer = EpisodicBuffer()
 stm = Stm(STM_MAXSIZE, STM_FORGETTHRESHHOLD, STM_ACTIVATIONCONSTANTBOOST, STM_FORGETCONSTANT)
 memoryController = MemoryController(stm, episodicBuffer)
 
-# Calculate synset frequency across entire corpus
-print "### Synset Frequency Analyser Running! ###"
-synsetFrequency = {}
-for word in tqdm(corpus.words()):
-    for synset in wn.synsets(word):
-        if not (synset in synsetFrequency):
-            synsetFrequency[synset] = 1
-        else:
-            synsetFrequency[synset] += 1
-print ""
-
 # format testing data as a list of documents
 test_files = corpus.fileids()
 total_corpus = []
@@ -38,7 +27,7 @@ for f in test_files:
 
 # Process a section of the corpus
 print "### Disambiguating Text! ###"
-disambiguatedCorpus = corpusAnalyser(total_corpus[0], memoryController, synsetFrequency)
+disambiguatedCorpus = corpusAnalyser(total_corpus[0], memoryController)
 
 # Empty the output text file
 outputFile = open("output.txt", "w")
