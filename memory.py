@@ -100,7 +100,7 @@ class Stm:
         else:
             self.lowestItem = self.getLowestActivation()
             if newItem.getActivation() < self.lowestItem.getActivation():
-                return newItem
+                return None
             else:
                 self.removeSynset(self.lowestItem.getSynset())
                 self.addItem(newItem)
