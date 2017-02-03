@@ -122,6 +122,12 @@ class Stm:
         else:
             raise LookupError("Item not in stm")
 
+    def empty(self):
+        # removes all items from stm
+        for item in self.getContents():
+            self.removeSynset(item.getSynset)
+
+
 ###############################################################################
 ###############################################################################
 
@@ -165,6 +171,7 @@ class EpisodicBuffer:
         raise LookupError("Item not in episodic buffer")
 
     def empty(self):
+        # Removes all synsets from the episodicBuffer
         self.contents = []
 
 ###############################################################################
@@ -207,3 +214,8 @@ class MemoryController:
         newMemItem = MemItem(synset, 0)
         newMemItem.activate(activationModifier)
         self.sendToStm(newMemItem)
+
+    def initialise(self):
+        # initialises both memory structures
+        self.stm.empty()
+        self.episodicBuffer.empty()
