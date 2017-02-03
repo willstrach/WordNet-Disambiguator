@@ -78,9 +78,14 @@ def hyponymSearch(synsetList, searchItem):
             return returnedItem
     return None
 
+def mostLikelySynset(synsetList, synsetFrequency):
+    outputSynset = synsetList[0]
+    for synset in synsetList:
+        if synsetFrequency[synset] > synsetFrequency[outputSynset]:
+            outputSynset = synset
+    return outputSynset
 
-
-def disambiguate(synsetList, memoryController):
+def disambiguate(synsetList, memoryController, synsetFrequency):
     for item in memoryController.stm.getContents():
         if item.getSynset() in synsetList:
             return item.getSynset()
@@ -89,4 +94,4 @@ def disambiguate(synsetList, memoryController):
         if returnedSynset is not None:
             return returnedSynset
         else:
-            return random.choice(synsetList)
+            return mostLikelySynset(synsetList, synsetFrequency)
