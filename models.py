@@ -50,7 +50,7 @@ def basicHypernym(synset, depth, memoryController, constant):
 
 
 def logHypernym(x, base, a, b):
-    return (-(b*math.log((a*x)+0.01, base)))
+    return (-(b*math.log((a*x)+0.001, base)))
 
 def variableHypernym(synset, depth, memoryController):
     activationModifier = logHypernym(depth, 10, (1/4), (1/8))
@@ -108,5 +108,4 @@ def disambiguate(synsetList, memoryController):
         returnedSynset = hyponymSearch(synsetList, item.getSynset())
         if returnedSynset is not None:
             return returnedSynset
-        else:
-            return mostLikelySynset(synsetList)
+    return mostLikelySynset(synsetList)
