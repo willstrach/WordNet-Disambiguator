@@ -192,6 +192,10 @@ class MemoryController:
             self.episodicBuffer.addSynset(returnedItem.getSynset())
 
     def activateSynset(self, synset, activationModifier):
+        # Takes input of synset, and: if synset exists in the stm, activates it
+        # if synset existsin episodicBuffer and not in stm, the synset is activated
+        # with a boost
+        # if synset isnot present in system, activates it and sends it to the stm
         if self.stm.inContents(synset):
             self.stm.getItem(synset).activate(activationModifier)
             return

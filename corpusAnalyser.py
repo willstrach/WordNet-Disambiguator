@@ -19,6 +19,7 @@ def corpusAnalyser(inputCorpus, memoryController):
     # Takes input of a corpus, which is a list of paragraphs
     # and loops through all paragraphs
     outputList = []
+    # for paragraph in inputCorpus:
     for paragraph in tqdm(inputCorpus):
         outputList.append(paragraphAnalyser(paragraph, memoryController))
     return outputList
@@ -37,11 +38,13 @@ def sentenceAnalyser(inputSentence, memoryController):
     # and loops through all nouns
     outputList = []
     for word in inputSentence:
-        wordAnalyser(word[0], memoryController)
-    # print(memoryController.stm)
+        if word[1][:1] == "N":
+            wordAnalyser(word[0], memoryController)
+    # print memoryController.stm
     for word in inputSentence:
-        if (len(wn.synsets(word[0])) > 0):
-            outputList.append((word[0], models.disambiguate(wn.synsets(word[0]), memoryController)))
+        if word[1][:1] == "N":
+            if (len(wn.synsets(word[0])) > 0):
+                outputList.append((word[0], models.disambiguate(wn.synsets(word[0]), memoryController)))
     return outputList
 
 def wordAnalyser(inputWord, memoryController):
@@ -49,4 +52,4 @@ def wordAnalyser(inputWord, memoryController):
     # and loops through all senses
     wordSenses = wn.synsets(inputWord)
     for sense in wordSenses:
-        models.linearHypernym(sense, 3, memoryController, 1)
+        models.variableHypernym(sense, 0, memoryController)

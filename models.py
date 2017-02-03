@@ -3,6 +3,7 @@ from corpusAnalyser import *
 from nltk.corpus import brown as corpus
 from nltk.corpus import wordnet as wn
 import random
+import math
 
 # All models to be varied will exist in this module. This makes it easier to vary
 # them during experimentation
@@ -47,16 +48,18 @@ def basicHypernym(synset, depth, memoryController, constant):
     else:
         return
 
-def linearHypernym(synset, depth, memoryController, constant):
-    constant *= 0.25
-    if constant < 0.05:
-        return
-    memoryController.activateSynset(synset, constant)
-    if depth > 0:
-        for hypernym in synset.hypernyms():
-            basicHypernym(hypernym, depth-1, memoryController, constant)
+
+def logHypernym(x, base, a, b):
+    return (-(b*math.log((a*x)+0.01, base)))
+
+def variableHypernym(synset, depth, memoryController):
+    activationModifier = logHypernym(depth, 10, (1/4), (1/8))
+    memoryController.activateSynset(synset, activationModifier)
+    if activationModifier < 0:
         return
     else:
+        for hypernym in synset.hypernyms():
+            variableHypernym(hypernym, depth+1, memoryController)
         return
 
 

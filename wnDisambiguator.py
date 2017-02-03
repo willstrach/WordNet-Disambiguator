@@ -10,7 +10,7 @@ from sys import stdout
 STM_MAXSIZE = 5
 STM_FORGETTHRESHHOLD = 0
 STM_ACTIVATIONCONSTANTBOOST = 2
-STM_FORGETCONSTANT = 0.5
+STM_FORGETCONSTANT = 1
 # Episodic Buffer
 
 
@@ -25,12 +25,12 @@ total_corpus = []
 for f in test_files:
     total_corpus.append(corpus.tagged_paras(f))
 
-
+# Process a section of the corpus
 disambiguatedCorpus = corpusAnalyser(total_corpus[0], memoryController)
 
+# Empty the output text file
 outputFile = open("output.txt", "w")
 outputFile.close()
-
 
 # Write the output of the program to file
 outputFile = open("output.txt", "a")
