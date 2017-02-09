@@ -101,6 +101,8 @@ def mostLikelySynset(synsetList):
 
 
 def disambiguate(synsetList, memoryController):
+    if len(synsetList) == 0:
+        return None
     for item in memoryController.stm.getContents():
         if item.getSynset() in synsetList:
             return item.getSynset()

@@ -1,14 +1,8 @@
 from memory import *
 import models
+from semcorReader import *
 from nltk.corpus import wordnet as wn
 from tqdm import tqdm
-
-def printStm(memoryController):
-    # Prints the contents of the stm, used for debugging
-    print "---------------------------------"
-    for synset in memoryController.stm.getContents():
-        print str(synset.getSynset()) + " - " + str(synset.getActivation())
-    print "---------------------------------"
 
 # The following functions deal with the analysis of the input corpus.
 # They are divided into corpus, paragraph, sentence and word instead
@@ -16,36 +10,34 @@ def printStm(memoryController):
 # the contents of the memory can be altered at each of these levels
 
 def corpusAnalyser(inputCorpus, memoryController):
-    # Takes input of a corpus, which is a list of paragraphs
-    # and loops through all paragraphs
-    outputList = []
-    # for paragraph in inputCorpus:
-    for paragraph in tqdm(inputCorpus):
-        outputList.append(paragraphAnalyser(paragraph, memoryController))
-    return outputList
-
-def paragraphAnalyser(inputParagraph, memoryController):
-    # Takes input of a paragraph, which is a list of sentences
+    # Takes input of a corpus, which is a list of sentences
     # and loops through all sentences
-    outputList = []
-    for sentence in inputParagraph:
-        outputList.append(sentenceAnalyser(sentence, memoryController))
-        memoryController.stm.forgetAll()
-    return outputList
+    # for paragraph in inputCorpus:
+    for sentence in tqdm(inputCorpus):
+        sentenceAnalyser(sentence, memoryController)
+    return
+
+# def paragraphAnalyser(inputParagraph, memoryController):
+#     # Takes input of a paragraph, which is a list of sentences
+#     # and loops through all sentences
+#     outputList = []
+#     for sentence in inputParagraph:
+#         outputList.append(sentenceAnalyser(sentence, memoryController))
+#         memoryController.stm.forgetAll()
+#     return outputList
 
 def sentenceAnalyser(inputSentence, memoryController):
     # Takes input of a sentence, which is a list of words
     # and loops through all nouns
-    outputList = []
     for word in inputSentence:
-        if word[1][:1] == "N":
-            wordAnalyser(word[0], memoryController)
-    # print memoryController.stm
+        if word.getPosTag() == "NN":
+            wordAnalyser(word.getWordForm()[0], memoryController)
     for word in inputSentence:
-        if word[1][:1] == "N":
-            if (len(wn.synsets(word[0])) > 0):
-                outputList.append((word[0], models.disambiguate(wn.synsets(word[0]), memoryController)))
-    return outputList
+        if word.getPosTag() == "NN":
+            word.setOutputSynset(models.disambiguate(wn.synsets(word.getWordForm()[0]), memoryController))
+            # if (len(wn.synsets(word[0])) > 0):
+            #     outputList.append((word[0], models.disambiguate(wn.synsets(word[0]), memoryController)))
+    return
 
 def wordAnalyser(inputWord, memoryController):
     # Takes input of a word, each with a set of senses
