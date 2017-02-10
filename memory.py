@@ -34,7 +34,15 @@ class Stm:
         self.forgetConstant = forgetConstant
 
     def __repr__(self):
-        # Prints the contents of the stm, used for debugging
+        # Returns the contents of the stm, formatted nicely, used for debugging
+        toReturn = "---------------------------------\n"
+        for synset in self.getContents():
+            toReturn += str(synset.getSynset()) + " - " + str(synset.getActivation()) + "\n"
+        toReturn += "---------------------------------"
+        return toReturn
+
+    def __str__(self):
+        # Returns the contents of the stm, formatted nicely, used for debugging
         toReturn = "---------------------------------\n"
         for synset in self.getContents():
             toReturn += str(synset.getSynset()) + " - " + str(synset.getActivation()) + "\n"
@@ -110,6 +118,8 @@ class Stm:
         # forgets all items in the stm
         for item in self.getContents():
             item.forget(self.forgetConstant)
+            if item.getActivation() < self.forgetConstant:
+                removeSynset(item)
 
     def activateItem(self, synset, constant):
         # actiivates the MemItem corresponding to the input synset
@@ -125,7 +135,7 @@ class Stm:
     def empty(self):
         # removes all items from stm
         for item in self.getContents():
-            self.removeSynset(item.getSynset)
+            self.removeSynset(item.getSynset())
 
 
 ###############################################################################
@@ -207,11 +217,11 @@ class MemoryController:
             self.stm.getItem(synset).activate(activationModifier)
             return
         if self.episodicBuffer.inContents(synset):
-            newMemItem = MemItem(synset, 1)
+            newMemItem = MemItem(synset, 0.0)
             newMemItem.activate(activationModifier)
             self.sendToStm(newMemItem)
             return
-        newMemItem = MemItem(synset, 0)
+        newMemItem = MemItem(synset, 0.0)
         newMemItem.activate(activationModifier)
         self.sendToStm(newMemItem)
 

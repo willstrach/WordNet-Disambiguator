@@ -50,10 +50,13 @@ def basicHypernym(synset, depth, memoryController, constant):
 
 
 def logHypernym(x, base, a, b):
-    return (-(b*math.log((a*x)+0.001, base)))
+    returnNum = math.log((a*(x+0.001)), base)
+    returnNum = 0 - returnNum
+    returnNum *= b
+    return returnNum
 
 def variableHypernym(synset, depth, memoryController):
-    activationModifier = logHypernym(depth, 10, (1/4), (1/8))
+    activationModifier = logHypernym(depth, 10, (2), (0.5))
     memoryController.activateSynset(synset, activationModifier)
     if activationModifier < 0:
         return
