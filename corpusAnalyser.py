@@ -32,7 +32,6 @@ def findWord(sentence, memoryController):
 def corpusAnalyser(inputCorpus, memoryController):
     # Takes input of a corpus, which is a list of sentences
     # and loops through all sentences
-    directlySeen = 0
     stmOutputFile = open("stmOutputFile.txt", "w")
     stmOutputFile.close()
     for sentence in tqdm(inputCorpus):
@@ -49,7 +48,11 @@ def sentenceAnalyser(inputSentence, memoryController):
             wordAnalyser(word.getWordForm()[0], memoryController)
     for word in inputSentence:
         if word.getPosTag() == "NN":
-            word.setOutputSynset(models.disambiguate(wn.synsets(word.getWordForm()[0]), memoryController))
+            disambiguationOutput = models.disambiguate(wn.synsets(word.getWordForm()[0]), memoryController)
+            word.setOutputSynset(disambiguationOutput[0])
+            if disambiguationOutput[1] == True:
+                word.setDirectlySeen(True)
+
     return
 
 def wordAnalyser(inputWord, memoryController):

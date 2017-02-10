@@ -28,8 +28,10 @@ else:
 
 # format testing data as a list of documents
 allFiles = semcor.fileids()
+noToTest = 2
+increment = int(len(allFiles)/noToTest)
 testFiles = []
-for i in range(0, len(allFiles) - 1, 300):
+for i in range(0, len(allFiles) - 1, increment):
     testFiles.append(allFiles[i])
 
 
@@ -45,7 +47,7 @@ print "\n"
 print "### Disambiguating Text! ###"
 for corpus in testCorpus:
     count += 1
-    print "File = ", + count
+    print ("File " + str(count) + "/" + str(noToTest))
     memoryController.stm.empty()
     memoryController.episodicBuffer.empty()
     corpusAnalyser(corpus, memoryController)
@@ -54,10 +56,13 @@ print "\n"
 print "### Evaluating Results! ###"
 correct = 0.0
 wordCount = 0.0
+directlySeen = 0
 for corpus in tqdm(testCorpus):
     for sentence in corpus:
         for word in sentence:
             wordCount += 1
+            if word.getDirectlySeen() == True:
+                directlySeen += 1
             if word.getOutputSynset() is not None:
                 for lemma in word.getOutputSynset().lemmas():
                     if str(lemma) == str(word.getCorrectSynset()):
@@ -65,6 +70,8 @@ for corpus in tqdm(testCorpus):
                         break
 
 percentCorrect = int((correct/wordCount) * 100)
+percentDirectlySeen = int((directlySeen/wordCount) * 100)
+
 
 # Empty the output text file
 f = open("OutputDataFile.txt", "w")
@@ -72,10 +79,11 @@ f.close()
 
 # Write the output of the program to file
 f = open("OutputDataFile.txt", "a")
-f.write("---------------------\n")
-f.write("---------------------\n")
-f.write("    " + str(percentCorrect) + "% Correct!\n")
-f.write("---------------------\n")
-f.write("---------------------\n")
+f.write("Percent Correct: " + str(percentCorrect) + "%\n")
+f.write("Synset Directly Seen: " + str(percentDirectlySeen) + "%\n")
+print "\n"
+print ("Percent Correct: " + str(percentCorrect) + "%")
+print ("Percent Synset Directly Seen: " + str(percentDirectlySeen) + "%\n")
+print "\n"
 
 f.close()

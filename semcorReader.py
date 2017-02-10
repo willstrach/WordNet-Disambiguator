@@ -10,6 +10,7 @@ class corpusWord:
         self.posTag = posTag
         self.correctSynset = correctSynset
         self.outputSynset = None
+        self.directlySeen = False
 
     def __repr__(self):
         return (str(self.getWordForm()) + " - " + str(self.getPosTag()) + " - " + str(self.getCorrectSynset()) + " - " + str(self.getOutputSynset()))
@@ -32,6 +33,12 @@ class corpusWord:
 
     def setOutputSynset(self, newSynset):
         self.outputSynset = newSynset
+
+    def getDirectlySeen(self):
+        return self.directlySeen
+
+    def setDirectlySeen(self, seen):
+        self.directlySeen = seen
 
 def idConverter(inputId):
     return ("c" + inputId.split("-")[1][:-4])
