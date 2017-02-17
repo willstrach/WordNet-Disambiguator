@@ -56,6 +56,7 @@ class Stm:
         return toReturn
 
     def getContents(self):
+        # sorts, by activation, and returns the contents of the stm
         if not self.contents:
             return self.contents
         self.unorderedList = self.contents[:]
@@ -111,13 +112,6 @@ class Stm:
         # Returns the MemItem in the stm with the lowest activation
         if self.getContents():
             return self.getContents()[-1]
-        # minItem = self.getContents()[0]
-        # for item in self.getContents():
-        #     if item.getActivation() < minItem.getActivation():
-        #         minItem = item
-        #     elif item.getActivation() == minItem.getActivation():
-        #         minItem = random.choice([minItem, item])
-        # return minItem
 
     def swapLowestItem(self, newItem):
         # Takes MemItem input, and either, swaps it for the lowest activation

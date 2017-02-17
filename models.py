@@ -86,7 +86,8 @@ def hyponymSearch(synsetList, searchItem):
 
 def hypernymSearch(synsetList, searchItem):
     for synset in synsetList:
-        if synset.common_hypernyms(searchItem):
+        common_hypernym = synset.lowest_common_hypernyms(searchItem)[0]
+        if common_hypernym.min_depth() > 4:
             return synset
 
 
