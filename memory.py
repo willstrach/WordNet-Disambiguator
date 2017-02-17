@@ -6,6 +6,12 @@ class MemItem:
         self.synset = synset
         self.activation = activation
 
+    def __str__(self):
+        return (str(self.synset) + " - " + str(self.activation))
+
+    def __repr__(self):
+        return (str(self.synset) + " - " + str(self.activation))
+
     def activate(self, constant):
         # This increases the activation of a synset according to a model
         self.activation = models.variableActivation(self.activation, constant)
@@ -50,18 +56,18 @@ class Stm:
         return toReturn
 
     def getContents(self):
-        if len(self.contents) == 0:
+        if not self.contents:
             return self.contents
-        unorderedList = self.contents
-        orderedList = []
-        maxItem = unorderedList[0]
-        while len(unorderedList) > 0:
-            for item in unorderedList:
-                if item.getActivation() > maxItem.getActivation:
+        self.unorderedList = self.contents[:]
+        self.orderedList = []
+        while len(self.unorderedList) > 0:
+            maxItem = self.unorderedList[0]
+            for item in self.unorderedList:
+                if item.getActivation() > maxItem.getActivation():
                     maxItem = item
-            unorderedList.remove(maxItem)
-            orderedList.append(maxItem)
-        return orderedList
+            self.unorderedList.remove(maxItem)
+            self.orderedList.append(maxItem)
+        return self.orderedList
 
 
     def getSize(self):
@@ -102,14 +108,15 @@ class Stm:
 
     def getLowestActivation(self):
         # Returns the MemItem in the stm with the lowest activation
-        return self.getContents()[-1]
-        minItem = self.getContents()[0]
-        for item in self.getContents():
-            if item.getActivation() < minItem.getActivation():
-                minItem = item
-            elif item.getActivation() == minItem.getActivation():
-                minItem = random.choice([minItem, item])
-        return minItem
+        if self.getContents():
+            return self.getContents()[-1]
+        # minItem = self.getContents()[0]
+        # for item in self.getContents():
+        #     if item.getActivation() < minItem.getActivation():
+        #         minItem = item
+        #     elif item.getActivation() == minItem.getActivation():
+        #         minItem = random.choice([minItem, item])
+        # return minItem
 
     def swapLowestItem(self, newItem):
         # Takes MemItem input, and either, swaps it for the lowest activation
@@ -133,6 +140,11 @@ class Stm:
             item.forget(self.forgetConstant)
             if item.getActivation() < self.forgetConstant:
                 self.removeSynset(item.getSynset())
+
+    def activateAll(self, activationModifier):
+        # activates all items in the stm
+        for item in self.getContents():
+            item.activate(activationModifier)
 
     def activateItem(self, synset, constant):
         # actiivates the MemItem corresponding to the input synset

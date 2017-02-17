@@ -84,6 +84,12 @@ def hyponymSearch(synsetList, searchItem):
             return returnedItem
     return None
 
+def hypernymSearch(synsetList, searchItem):
+    for synset in synsetList:
+        if synset.common_hypernyms(searchitem):
+            return synset
+
+
 def synsetFrequency(synset):
     # Given a synset, thee function sums the frequency over all its lemmas,
     # and returns the value
