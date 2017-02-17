@@ -32,32 +32,40 @@ def findWord(sentence, memoryController):
 def corpusAnalyser(inputCorpus, memoryController):
     # Takes input of a corpus, which is a list of sentences
     # and loops through all sentences
+    prevSentenceOne = None
+    prevSentenceTwo = None
     stmOutputFile = open("stmOutputFile.txt", "w")
     stmOutputFile.close()
     for sentence in tqdm(inputCorpus):
-        sentenceAnalyser(sentence, memoryController)
+        sentenceAnalyser(sentence, memoryController, prevSentenceTwo)
         memoryController.stm.forgetAll()
         writeStm(str(memoryController.stm), sentence, "stmOutputFile.txt")
+        prevSentenceTwo = prevSentenceOne
+        prevSentenceOne = sentence
+    sentenceAnalyser([], memoryController, prevSentenceOne)
+    sentenceAnalyser([], memoryController, prevSentenceTwo)
     return
 
-def sentenceAnalyser(inputSentence, memoryController):
+
+def sentenceAnalyser(inputSentence, memoryController, prevSentenceTwo):
     # Takes input of a sentence, which is a list of words
     # and loops through all nouns
     for word in inputSentence:
         if word.getPosTag() == "NN":
             wordAnalyser(word.getWordForm()[0], memoryController)
-    for word in inputSentence:
-        if word.getPosTag() == "NN":
-            disambiguationOutput = models.disambiguate(wn.synsets(word.getWordForm()[0]), memoryController)
-            word.setOutputSynset(disambiguationOutput[0])
-            if disambiguationOutput[1] == True:
-                word.setDirectlySeen(True)
+    if prevSentenceTwo is not None:
+        for word in prevSentenceTwo:
+            if word.getPosTag() == "NN":
+                disambiguationOutput = models.disambiguate(wn.synsets(word.getWordForm()[0], pos="n"), memoryController)
+                word.setOutputSynset(disambiguationOutput[0])
+                if disambiguationOutput[1] == True:
+                    word.setDirectlySeen(True)
 
     return
 
 def wordAnalyser(inputWord, memoryController):
     # Takes input of a word, each with a set of senses
     # and loops through all senses
-    wordSenses = wn.synsets(inputWord)
+    wordSenses = wn.synsets(inputWord, pos="n")
     for sense in wordSenses:
         models.variableHypernym(sense, 0.0, memoryController)

@@ -50,7 +50,19 @@ class Stm:
         return toReturn
 
     def getContents(self):
-        return self.contents
+        if len(self.contents) == 0:
+            return self.contents
+        unorderedList = self.contents
+        orderedList = []
+        maxItem = unorderedList[0]
+        while len(unorderedList) > 0:
+            for item in unorderedList:
+                if item.getActivation() > maxItem.getActivation:
+                    maxItem = item
+            unorderedList.remove(maxItem)
+            orderedList.append(maxItem)
+        return orderedList
+
 
     def getSize(self):
         return self.size
@@ -90,6 +102,7 @@ class Stm:
 
     def getLowestActivation(self):
         # Returns the MemItem in the stm with the lowest activation
+        return self.getContents()[-1]
         minItem = self.getContents()[0]
         for item in self.getContents():
             if item.getActivation() < minItem.getActivation():
@@ -119,7 +132,7 @@ class Stm:
         for item in self.getContents():
             item.forget(self.forgetConstant)
             if item.getActivation() < self.forgetConstant:
-                removeSynset(item)
+                self.removeSynset(item.getSynset())
 
     def activateItem(self, synset, constant):
         # actiivates the MemItem corresponding to the input synset
@@ -217,7 +230,7 @@ class MemoryController:
             self.stm.getItem(synset).activate(activationModifier)
             return
         if self.episodicBuffer.inContents(synset):
-            newMemItem = MemItem(synset, 0.0)
+            newMemItem = MemItem(synset, 0.5)
             newMemItem.activate(activationModifier)
             self.sendToStm(newMemItem)
             return

@@ -12,7 +12,7 @@ import models
 STM_MAXSIZE = 5
 STM_FORGETTHRESHHOLD = 0
 STM_ACTIVATIONCONSTANTBOOST = 2
-STM_FORGETCONSTANT = 0
+STM_FORGETCONSTANT = 0.5
 
 
 #initialise memory structures
@@ -28,7 +28,7 @@ else:
 
 # format testing data as a list of documents
 allFiles = semcor.fileids()
-noToTest = 2
+noToTest = 4
 increment = int(len(allFiles)/noToTest)
 testFiles = []
 for i in range(0, len(allFiles) - 1, increment):
