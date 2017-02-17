@@ -53,6 +53,7 @@ def sentenceAnalyser(inputSentence, memoryController, prevSentenceTwo):
     for word in inputSentence:
         if word.getPosTag() == "NN":
             wordAnalyser(word.getWordForm()[0], memoryController)
+            memoryController.stm.activateAll(0.1)
     if prevSentenceTwo is not None:
         for word in prevSentenceTwo:
             if word.getPosTag() == "NN":

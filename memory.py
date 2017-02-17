@@ -12,13 +12,13 @@ class MemItem:
     def __repr__(self):
         return (str(self.synset) + " - " + str(self.activation))
 
-    def activate(self, constant):
+    def activate(self, modifier):
         # This increases the activation of a synset according to a model
-        self.activation = models.variableActivation(self.activation, constant)
+        self.activation = models.variableActivation(self.activation, modifier)
 
-    def forget(self, constant):
+    def forget(self, modifier):
         # This decreases the activation of a synset according to a model
-        self.activation = models.variableForget(self.activation, constant)
+        self.activation = models.variableForget(self.activation, modifier)
 
     def getSynset(self):
         return self.synset
@@ -30,14 +30,14 @@ class MemItem:
 ###############################################################################
 
 class Stm:
-    def __init__(self, maxSize, forgetThreshold, activationConstantBoost, forgetConstant):
+    def __init__(self, maxSize, forgetThreshold, activationModifierBoost, forgetModifier):
         self.contents = []
         self.size = 0
         # The following values can be set, so that they can be adjusted in experimentation
         self.maxSize = maxSize
         self.forgetThreshold = forgetThreshold
-        self.activationConstantBoost = activationConstantBoost
-        self.forgetConstant = forgetConstant
+        self.activationModifierBoost = activationModifierBoost
+        self.forgetModifier = forgetModifier
 
     def __repr__(self):
         # Returns the contents of the stm, formatted nicely, used for debugging
@@ -67,11 +67,12 @@ class Stm:
                     maxItem = item
             self.unorderedList.remove(maxItem)
             self.orderedList.append(maxItem)
-        return self.orderedList
+        self.contents = self.orderedList
+        return self.contents
 
 
     def getSize(self):
-        return self.size
+        return len(self.getContents())
 
     def inContents(self, inputSynset):
         # Takes an input of a synset, and returns boolean value, depending upon whether synset is in stm
@@ -137,8 +138,8 @@ class Stm:
     def forgetAll(self):
         # forgets all items in the stm
         for item in self.getContents():
-            item.forget(self.forgetConstant)
-            if item.getActivation() < self.forgetConstant:
+            item.forget(self.forgetModifier)
+            if item.getActivation() < self.forgetThreshold:
                 self.removeSynset(item.getSynset())
 
     def activateAll(self, activationModifier):
@@ -146,13 +147,13 @@ class Stm:
         for item in self.getContents():
             item.activate(activationModifier)
 
-    def activateItem(self, synset, constant):
+    def activateItem(self, synset, modifier):
         # actiivates the MemItem corresponding to the input synset
-        constant *= self.activationConstantBoost
+        modifier *= self.activationModifierBoost
         if self.inContents(synset):
             for item in self.getContents():
                 if item.getSynset() == synset:
-                    item.activate(constant)
+                    item.activate(modifier)
                     return
         else:
             raise LookupError("Item not in stm")

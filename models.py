@@ -86,7 +86,7 @@ def hyponymSearch(synsetList, searchItem):
 
 def hypernymSearch(synsetList, searchItem):
     for synset in synsetList:
-        if synset.common_hypernyms(searchitem):
+        if synset.common_hypernyms(searchItem):
             return synset
 
 
@@ -116,7 +116,7 @@ def disambiguate(synsetList, memoryController):
         if item.getSynset() in synsetList:
             return item.getSynset(), True
     for item in memoryController.stm.getContents():
-        returnedSynset = hyponymSearch(synsetList, item.getSynset())
+        returnedSynset = hypernymSearch(synsetList, item.getSynset())
         if returnedSynset is not None:
             return returnedSynset, False
     return mostLikelySynset(synsetList), False

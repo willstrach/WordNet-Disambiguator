@@ -28,8 +28,8 @@ else:
 
 # format testing data as a list of documents
 allFiles = semcor.fileids()
-noToTest = 1
-increment = int(len(allFiles)/noToTest)
+noToTest = 4
+increment = int((len(allFiles) - 1)/noToTest) + 1
 testFiles = []
 for i in range(0, len(allFiles) - 1, increment):
     testFiles.append(allFiles[i])
