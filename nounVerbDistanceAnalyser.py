@@ -12,7 +12,7 @@ def verbDistance(verb, sentence):
             verbLocation = i
     for i in range(0,len(sentence)):
         if sentence[i][1] == "N":
-            outputList.append((sentence[i], 1/(abs(i - verbLocation))))
+            outputList.append((sentence[i][0], 1/(abs(i - verbLocation))))
     return outputList
 
 def nounDistance(noun, sentence):
@@ -22,7 +22,7 @@ def nounDistance(noun, sentence):
             nounLocation = i
     for i in range(0,len(sentence)):
         if sentence[i][1] == "V":
-            outputList.append((sentence[i], 1.0/(abs(i - nounLocation))))
+            outputList.append((sentence[i][0], 1.0/(abs(i - nounLocation))))
     return outputList
 
 def listUpdater(currentList, updateList):
@@ -74,12 +74,12 @@ nounFile = open("NounFile.txt", "a")
 for noun in nounDict.keys():
     nounFile.write("**" + str(noun) + "\n")
     for verb in nounDict[noun]:
-        nounFile.write("    --" + str(verb) + "\n")
+        nounFile.write("    ++" + str(verb) + "\n")
 nounFile.close()
 
 verbFile = open("VerbFile.txt", "a")
 for verb in verbDict.keys():
     verbFile.write("**" + str(verb) + "\n")
     for noun in verbDict[verb]:
-        verbFile.write("    --" + str(noun) + "\n")
+        verbFile.write("    ++" + str(noun) + "\n")
 verbFile.close()
