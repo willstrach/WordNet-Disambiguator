@@ -5,6 +5,7 @@ from nltk.corpus import wordnet as wn
 from tqdm import tqdm
 
 def writeStm(stmString, sentence, outputFile):
+    # Writes the contents of the stm toan output file
     stmOutputFile = open(outputFile, "a")
     stmOutputFile.write("=====================")
     stmOutputFile.write("\n")
@@ -16,13 +17,6 @@ def writeStm(stmString, sentence, outputFile):
     stmOutputFile.write("\n")
     stmOutputFile.write("=====================")
     stmOutputFile.close()
-
-def findWord(sentence, memoryController):
-    for word in sentence:
-        for synset in wn.synsets(word.getWordForm()):
-            if memoryController.stm.inContents(synset):
-                return True
-    return False
 
 # The following functions deal with the analysis of the input corpus.
 # They are divided into corpus, paragraph, sentence and word instead

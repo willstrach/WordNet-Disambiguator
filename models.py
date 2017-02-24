@@ -111,13 +111,15 @@ def mostLikelySynset(synsetList):
 
 
 def disambiguate(synsetList, memoryController):
+    # Given the list of synsets for a word, and the memoryController,
+    # disambiguate will return a single synset whichitbelieves to be correct
     if len(synsetList) == 0:
         return None, False
     for item in memoryController.stm.getContents():
         if item.getSynset() in synsetList:
             return item.getSynset(), True
     for item in memoryController.stm.getContents():
-        returnedSynset = hypernymSearch(synsetList, item.getSynset())
+        returnedSynset = hyponymSearch(synsetList, item.getSynset())
         if returnedSynset is not None:
             return returnedSynset, False
     return mostLikelySynset(synsetList), False

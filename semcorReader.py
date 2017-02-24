@@ -63,20 +63,3 @@ def semcorConverter(fileId):
                 wordList.append(wordObj)
         sentenceList.append(wordList)
     return sentenceList
-
-
-semcorFileList = semcor.fileids()
-brownFileList = brown.fileids()
-
-
-convertedCorpus = semcorConverter(semcorFileList[0])
-
-# f = open("semcorTestOutput.txt", "w")
-# f.close()
-#
-# f = open("semcorTestOutput.txt", "a")
-# for sentence in convertedCorpus:
-#     for word in sentence:
-#         f.write(str(word) + "\n")
-#     f.write(".")
-# f.close()

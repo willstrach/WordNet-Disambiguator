@@ -7,9 +7,11 @@ class MemItem:
         self.activation = activation
 
     def __str__(self):
+        # Returns the contents of the MemItem, formatted nicely, used for debugging
         return (str(self.synset) + " - " + str(self.activation))
 
     def __repr__(self):
+        # Returns the contents of the MemItem, formatted nicely, used for debugging
         return (str(self.synset) + " - " + str(self.activation))
 
     def activate(self, modifier):
@@ -59,20 +61,21 @@ class Stm:
         # sorts, by activation, and returns the contents of the stm
         if not self.contents:
             return self.contents
-        self.unorderedList = self.contents[:]
-        self.orderedList = []
-        while len(self.unorderedList) > 0:
-            maxItem = self.unorderedList[0]
-            for item in self.unorderedList:
+        unorderedList = self.contents[:]
+        orderedList = []
+        while len(unorderedList) > 0:
+            maxItem = unorderedList[0]
+            for item in unorderedList:
                 if item.getActivation() > maxItem.getActivation():
                     maxItem = item
-            self.unorderedList.remove(maxItem)
-            self.orderedList.append(maxItem)
-        self.contents = self.orderedList
+            unorderedList.remove(maxItem)
+            orderedList.append(maxItem)
+        self.contents = orderedList
         return self.contents
 
 
     def getSize(self):
+        # Returns hown many items are in the stm
         return len(self.getContents())
 
     def inContents(self, inputSynset):
