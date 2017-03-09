@@ -115,11 +115,15 @@ def disambiguate(synsetList, memoryController, blackList):
     # print "disambiguate"
     if len(synsetList) == 0:
         return None, False
+
+    # Check if synset exists directly in STM
     for item in memoryController.stm.getContents():
         if item.getSynset() in blackList:
             continue
         elif item.getSynset() in synsetList:
             return item.getSynset(), True
+
+    # Use hypernym/hypernym model for disambiguation
     for item in memoryController.stm.getContents():
         returnedSynset = hyponymSearch(synsetList, item.getSynset())
         if returnedSynset is not None:
@@ -127,6 +131,8 @@ def disambiguate(synsetList, memoryController, blackList):
                 continue
             else:
                 return returnedSynset, False
+
+    # Use frequency for disambiguation
     outputSynset = mostLikelySynset(synsetList, blackList)
     if outputSynset is not None:
         return mostLikelySynset(synsetList, blackList), False
