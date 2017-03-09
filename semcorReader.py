@@ -48,7 +48,7 @@ def wordSplitter(inputWord):
             wordForm = inputWord.leaves()
             posTag = inputWord.pos()[0][1]
             lemmaTag = inputWord.label()
-            if posTag == "NN":
+            if (posTag == "NN") or (posTag == "VB"):
                 return corpusWord(wordForm, posTag, lemmaTag)
         else:
             return None

@@ -16,9 +16,18 @@ STM_FORGETCONSTANT = 0.5
 
 
 #initialise memory structures
-episodicBuffer = EpisodicBuffer()
-stm = Stm(STM_MAXSIZE, STM_FORGETTHRESHHOLD, STM_ACTIVATIONCONSTANTBOOST, STM_FORGETCONSTANT)
-memoryController = MemoryController(stm, episodicBuffer)
+verbStm = Stm(STM_MAXSIZE, STM_FORGETTHRESHHOLD, STM_ACTIVATIONCONSTANTBOOST, STM_FORGETCONSTANT)
+verbEpisodicBuffer = EpisodicBuffer()
+verbMemoryController = MemoryController(verbStm, verbEpisodicBuffer)
+
+nounStm = Stm(STM_MAXSIZE, STM_FORGETTHRESHHOLD, STM_ACTIVATIONCONSTANTBOOST, STM_FORGETCONSTANT)
+nounEpisodicBuffer = EpisodicBuffer()
+nounMemoryController = MemoryController(nounStm, nounEpisodicBuffer)
+
+
+# episodicBuffer = EpisodicBuffer()
+# stm = Stm(STM_MAXSIZE, STM_FORGETTHRESHHOLD, STM_ACTIVATIONCONSTANTBOOST, STM_FORGETCONSTANT)
+# memoryController = MemoryController(stm, episodicBuffer)
 
 # Clear screen
 if os.name == "nt":
@@ -48,9 +57,10 @@ print "### Disambiguating Text! ###"
 for corpus in testCorpus:
     count += 1
     print ("File " + str(count) + "/" + str(noToTest))
-    memoryController.stm.empty()
-    memoryController.episodicBuffer.empty()
-    corpusAnalyser(corpus, memoryController)
+    nounMemoryController.initialise()
+    verbMemoryController.initialise()
+
+    corpusAnalyser(corpus, nounMemoryController, verbMemoryController)
 
 print "\n"
 print "### Evaluating Results! ###"

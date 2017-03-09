@@ -90,7 +90,6 @@ def hypernymSearch(synsetList, searchItem):
         if common_hypernym.min_depth() > 4:
             return synset
 
-
 def synsetFrequency(synset):
     # Given a synset, thee function sums the frequency over all its lemmas,
     # and returns the value
@@ -107,8 +106,6 @@ def mostLikelySynset(synsetList):
         if synsetFrequency(outputSynset) < synsetFrequency(synset):
             outputSynset = synset
     return outputSynset
-
-
 
 def disambiguate(synsetList, memoryController):
     # Given the list of synsets for a word, and the memoryController,
