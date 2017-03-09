@@ -5,6 +5,7 @@ from nltk.corpus import wordnet as wn
 from semcorReader import *
 from tqdm import tqdm
 import models
+import nounVerbFileReader
 
 
 # The following values are stated here as constants to ease experimentation
@@ -24,10 +25,7 @@ nounStm = Stm(STM_MAXSIZE, STM_FORGETTHRESHHOLD, STM_ACTIVATIONCONSTANTBOOST, ST
 nounEpisodicBuffer = EpisodicBuffer()
 nounMemoryController = MemoryController(nounStm, nounEpisodicBuffer)
 
-
-# episodicBuffer = EpisodicBuffer()
-# stm = Stm(STM_MAXSIZE, STM_FORGETTHRESHHOLD, STM_ACTIVATIONCONSTANTBOOST, STM_FORGETCONSTANT)
-# memoryController = MemoryController(stm, episodicBuffer)
+nounDict, verbDict =  nounVerbFileReader.relationDictGen()
 
 # Clear screen
 if os.name == "nt":
@@ -59,8 +57,7 @@ for corpus in testCorpus:
     print ("File " + str(count) + "/" + str(noToTest))
     nounMemoryController.initialise()
     verbMemoryController.initialise()
-
-    corpusAnalyser(corpus, nounMemoryController, verbMemoryController)
+    corpusAnalyser(corpus, nounMemoryController, verbMemoryController, nounDict, verbDict)
 
 print "\n"
 print "### Evaluating Results! ###"

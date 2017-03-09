@@ -25,7 +25,7 @@ def writeStm(nounStmString, verbStmString, sentence, outputFile):
 # of just using nested loops for clarity, and so that
 # the contents of the memory can be altered at each of these levels
 
-def corpusAnalyser(inputCorpus, nounMemoryController, verbMemoryController):
+def corpusAnalyser(inputCorpus, nounMemoryController, verbMemoryController, nounDict, verbDict):
     # Takes input of a corpus, which is a list of sentences
     # and loops through all sentences
     prevSentenceOne = None
@@ -35,8 +35,7 @@ def corpusAnalyser(inputCorpus, nounMemoryController, verbMemoryController):
     stmOutputFile.close()
 
     for sentence in tqdm(inputCorpus):
-        sentenceAnalyser(sentence, nounMemoryController, verbMemoryController, prevSentenceTwo)
-        sentenceAnalyser(sentence, nounMemoryController, verbMemoryController, prevSentenceTwo)
+        sentenceAnalyser(sentence, nounMemoryController, verbMemoryController, prevSentenceTwo, nounDict, verbDict)
 
         nounMemoryController.stm.forgetAll()
         verbMemoryController.stm.forgetAll()
@@ -46,19 +45,19 @@ def corpusAnalyser(inputCorpus, nounMemoryController, verbMemoryController):
         prevSentenceTwo = prevSentenceOne
         prevSentenceOne = sentence
 
-    sentenceAnalyser([], nounMemoryController, verbMemoryController, prevSentenceOne)
-    sentenceAnalyser([], nounMemoryController, verbMemoryController, prevSentenceTwo)
+    sentenceAnalyser([], nounMemoryController, verbMemoryController, prevSentenceOne, nounDict, verbDict)
+    sentenceAnalyser([], nounMemoryController, verbMemoryController, prevSentenceTwo, nounDict, verbDict)
     return
 
 
-def sentenceAnalyser(inputSentence, nounMemoryController, verbMemoryController, prevSentenceTwo):
+def sentenceAnalyser(inputSentence, nounMemoryController, verbMemoryController, prevSentenceTwo, nounDict, verbDict):
     # Takes input of a sentence, which is a list of words
     # and loops through all nouns
     for word in inputSentence:
         if word.getPosTag() == "NN":
-            wordAnalyser(word.getWordForm()[0], nounMemoryController)
+            wordAnalyser(word.getWordForm()[0], "n", nounMemoryController)
         if word.getPosTag() == "VB":
-            wordAnalyser(word.getWordForm()[0], verbMemoryController)
+            wordAnalyser(word.getWordForm()[0], "v",verbMemoryController)
             # memoryController.stm.activateAll(0.1)
     if prevSentenceTwo is not None:
         for word in prevSentenceTwo:
@@ -68,15 +67,15 @@ def sentenceAnalyser(inputSentence, nounMemoryController, verbMemoryController, 
                 if disambiguationOutput[1] == True:
                     word.setDirectlySeen(True)
             if word.getPosTag() == "VB":
-                disambiguationOutput = models.disambiguate(wn.synsets(word.getWordForm()[0], pos="n"), verbMemoryController)
+                disambiguationOutput = models.disambiguate(wn.synsets(word.getWordForm()[0], pos="v"), verbMemoryController)
                 word.setOutputSynset(disambiguationOutput[0])
                 if disambiguationOutput[1] == True:
                     word.setDirectlySeen(True)
     return
 
-def wordAnalyser(inputWord, memoryController):
+def wordAnalyser(inputWord, posTag, memoryController):
     # Takes input of a word, each with a set of senses
     # and loops through all senses
-    wordSenses = wn.synsets(inputWord, pos="n")
+    wordSenses = wn.synsets(inputWord, pos=posTag)
     for sense in wordSenses:
         models.variableHypernym(sense, 0.0, memoryController)
