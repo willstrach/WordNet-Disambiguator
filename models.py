@@ -98,25 +98,37 @@ def synsetFrequency(synset):
         outputFrequency += lemma.count()
     return outputFrequency
 
-def mostLikelySynset(synsetList):
+def mostLikelySynset(synsetList, blackList):
     # Given a list of synsets, this function calculates the most likely one
     # and returns it
     outputSynset = synsetList[0]
     for synset in synsetList:
-        if synsetFrequency(outputSynset) < synsetFrequency(synset):
+        if synset in blackList:
+            continue
+        elif synsetFrequency(outputSynset) < synsetFrequency(synset):
             outputSynset = synset
     return outputSynset
 
-def disambiguate(synsetList, memoryController):
+def disambiguate(synsetList, memoryController, blackList):
     # Given the list of synsets for a word, and the memoryController,
     # disambiguate will return a single synset whichitbelieves to be correct
+    # print "disambiguate"
     if len(synsetList) == 0:
         return None, False
     for item in memoryController.stm.getContents():
-        if item.getSynset() in synsetList:
+        if item.getSynset() in blackList:
+            continue
+        elif item.getSynset() in synsetList:
             return item.getSynset(), True
     for item in memoryController.stm.getContents():
         returnedSynset = hyponymSearch(synsetList, item.getSynset())
         if returnedSynset is not None:
-            return returnedSynset, False
-    return mostLikelySynset(synsetList), False
+            if returnedSynset in blackList:
+                continue
+            else:
+                return returnedSynset, False
+    outputSynset = mostLikelySynset(synsetList, blackList)
+    if outputSynset is not None:
+        return mostLikelySynset(synsetList, blackList), False
+    else:
+        return mostLikelySynset(synsetList, []), False
